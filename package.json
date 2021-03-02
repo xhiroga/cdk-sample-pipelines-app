@@ -28,6 +28,7 @@
     "@aws-cdk/core": "1.90.0",
     "@aws-cdk/pipelines": "^1.90.0",
     "cdk-assume-role-credential-plugin": "^1.2.2",
+    "dotenv": "^8.2.0",
     "source-map-support": "^0.5.19"
   }
 }
