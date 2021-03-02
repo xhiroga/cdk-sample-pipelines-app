@@ -4,15 +4,16 @@ This is a sample app to show how to use the cdk-assume-role-credential-plugin
 with the [CDK Pipelines](https://aws.amazon.com/blogs/developer/cdk-pipelines-continuous-delivery-for-aws-cdk-applications/) Construct
 
 ## Overview
+
 In this sample app you will use the [cdk-assume-role-credential-plugin](../README.md) to read information from multiple
 AWS Accounts as a part of the synthesis process. For the rest of the walkthrough it will assume the use of three AWS Accounts.
 You can use any three accounts, but the role they will
 play in the walkthrough are described below:
 
 1. Shared Services Account: This account is where you will run the CDK commands from, and will have access to assume role into the other two AWS Accounts.
-This is where you will also deploy a pipeline to automate the deployment of your CDK application.
-3. Development Application Account: This account is used as the development environment for the CDK application.
-4. Production Application Account: This account is used as the production environment for the CDK application.
+   This is where you will also deploy a pipeline to automate the deployment of your CDK application.
+2. Development Application Account: This account is used as the development environment for the CDK application.
+3. Production Application Account: This account is used as the production environment for the CDK application.
 
 ## Prerequisites
 
@@ -20,8 +21,8 @@ To deploy the sample application in this repo you will need to first make sure
 you have a couple of things setup.
 
 1. You will need a GitHub account and will need to create a GitHub repository named `cdk-sample-pipelines-app`.
-3. Within the Shared Services AWS account you will need to store a GitHub personal access token as a plaintext secret (not a JSON secret)
-in AWS Secrets Manager under the name `github-token`
+2. Within the Shared Services AWS account you will need to store a GitHub personal access token as a plaintext secret (not a JSON secret)
+   in AWS Secrets Manager under the name `github-token`
 
 Before we begin you will need to clone this repo locally and remove the `.git` directory.
 
@@ -32,10 +33,12 @@ $ rm -rf .git
 ```
 
 ## Setup
+
 Navigate to the `cdk-sample-pipelines-app` folder and link it to your GitHub repo you created as
 part of the prerequisites.
 
 **replace `aws-samples` org with your GitHub org**
+
 ```bash
 $ cd cdk-sample-pipelines-app
 $ git init
@@ -55,15 +58,16 @@ $ npm install
 Now lets update our app and replace some of the placeholder values.
 
 1. Edit the [bin/required-resources.ts](bin/required-resources.ts) file & fill in the AWS Account numbers where indicated.
+
 ```typescript
-const dev = { account: 'REPLACE_WITH_DEV_ACCOUNT_ID', region: 'us-east-2' }
-const prod = { account: 'REPLACE_WITH_PROD_ACCOUNT_ID', region: 'us-east-2' }
-const trustedAccount = 'REPLACE_WITH_SHARED_SERVICES_ACCOUNT_ID';
+const dev = { account: "REPLACE_WITH_DEV_ACCOUNT_ID", region: "us-east-2" };
+const prod = { account: "REPLACE_WITH_PROD_ACCOUNT_ID", region: "us-east-2" };
+const trustedAccount = "REPLACE_WITH_SHARED_SERVICES_ACCOUNT_ID";
 ```
 
 2. Open the `lib/pipeline-stack.ts` file. This is where we define our
-pipeline infrastructure using CDK Pipelines. Replace the placeholder value
-for `owner`.
+   pipeline infrastructure using CDK Pipelines. Replace the placeholder value
+   for `owner`.
 
 3. Edit the [bin/sample-app.ts](bin/sample-app.ts) file & fill in the AWS Account numbers where indicated.
 
@@ -80,13 +84,14 @@ Because we are working with [CDK Pipelines](../README.md#new-style-synthesis) we
 We will create a single IAM role with the name `cdk-readOnlyRole` and will have the ReadOnlyAccess AWS Managed Policy attached.
 The role is also configured to trust the Shared Services account.
 
-
 1. Using CLI credentials for the Dev AWS Account, run cdk deploy to create the resources
+
 ```bash
 $ cdk deploy –-app "npx ts-node bin/required-resources.ts" dev
 ```
 
 2. Using CLI credentials for the Prod AWS Account, run cdk deploy to create the resources
+
 ```bash
 $ cdk deploy –-app "npx ts-node bin/required-resources.ts" prod
 ```
@@ -112,13 +117,15 @@ You can reference [this section](../README.md#new-style-bootstrap) if you want
 to use the plugin for bootstrapping as well.
 
 **dev account**
+
 ```bash
-$ npx cdk bootstrap --trust REPLACE_WITH_SHARED_SERVICES_ACCOUNT_ID --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess aws://REPLACE_WITH_DEV_ACCOUNT/us-east-2
+$ npx cdk bootstrap --trust ${REPLACE_WITH_SHARED_SERVICES_ACCOUNT_ID} --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess aws://${REPLACE_WITH_DEV_ACCOUNT}/us-east-2
 ```
 
 **prod account**
+
 ```bash
-$ npx cdk bootstrap --trust REPLACE_WITH_SHARED_SERVICES_ACCOUNT_ID --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess aws://REPLACE_WITH_PROD_ACCOUNT/us-east-1
+$ npx cdk bootstrap --trust ${REPLACE_WITH_SHARED_SERVICES_ACCOUNT_ID} --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess aws://${REPLACE_WITH_PROD_ACCOUNT}/us-east-1
 ```
 
 Once it is finished bootstrapping, we can provision the pipeline. Since the pipeline will run as soon
@@ -161,19 +168,22 @@ You can either login to the console and view the CloudFormation Stack outputs
 
 Or you can run the below CLI commands.
 
-__remember to use the credentials for the respective accounts__
+**remember to use the credentials for the respective accounts**
 
 **dev account**
+
 ```bash
 $ aws cloudformation describe-stacks --stack-name devSampleApp-SampleStack --query 'Stacks[].Outputs[?OutputKey==`Param`].OutputValue' --output text --region us-east-2
 ```
 
 **prod account**
+
 ```bash
 $ aws cloudformation describe-stacks --stack-name prodSampleApp-SampleStack --query 'Stacks[].Outputs[?OutputKey==`Param`].OutputValue' --output text --region us-east-1
 ```
 
 ## Cleaning up
+
 To avoid incurring future charges, delete the resources.
 
 Delete the Pipeline stacks by running the below command:
