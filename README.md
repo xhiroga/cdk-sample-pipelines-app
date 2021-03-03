@@ -119,13 +119,15 @@ to use the plugin for bootstrapping as well.
 **dev account**
 
 ```bash
-$ npx cdk bootstrap --trust ${REPLACE_WITH_SHARED_SERVICES_ACCOUNT_ID} --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess aws://${REPLACE_WITH_DEV_ACCOUNT}/us-east-2
+export $(cat .env)
+$ npx cdk bootstrap --trust ${REPLACE_WITH_SHARED_SERVICES_ACCOUNT_ID} --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess aws://${REPLACE_WITH_DEV_ACCOUNT_ID}/us-east-2
 ```
 
 **prod account**
 
 ```bash
-$ npx cdk bootstrap --trust ${REPLACE_WITH_SHARED_SERVICES_ACCOUNT_ID} --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess aws://${REPLACE_WITH_PROD_ACCOUNT}/us-east-1
+export $(cat .env)
+$ npx cdk bootstrap --trust ${REPLACE_WITH_SHARED_SERVICES_ACCOUNT_ID} --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess aws://${REPLACE_WITH_PROD_ACCOUNT_ID}/us-east-1
 ```
 
 Once it is finished bootstrapping, we can provision the pipeline. Since the pipeline will run as soon
