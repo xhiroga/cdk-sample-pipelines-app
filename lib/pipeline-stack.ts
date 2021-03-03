@@ -28,7 +28,7 @@ export class PipelineStack extends cdk.Stack {
         ),
         trigger: actions.GitHubTrigger.WEBHOOK,
         owner: "xhiroga",
-        repo: "cdk-sample-pipelines-app",
+        repo: "my-cdk-sample-pipelines-app",
         branch: "main",
       }),
       synthAction: pipelines.SimpleSynthAction.standardNpmSynth({
